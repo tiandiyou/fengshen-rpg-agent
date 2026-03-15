@@ -1,0 +1,274 @@
+[
+  {
+    "id": 1,
+    "name": "项目初始化与基础架构",
+    "description": "创建项目目录结构，搭建单HTML基础框架，设置移动端适配",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": []
+  },
+  {
+    "id": 2,
+    "name": "游戏主界面与导航",
+    "description": "实现主菜单、开始游戏、设置等基础界面",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [1]
+  },
+  {
+    "id": 3,
+    "name": "数据存储系统",
+    "description": "实现localStorage数据结构设计，包含玩家数据、伙伴数据、进度数据",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [1]
+  },
+  {
+    "id": 4,
+    "name": "主角创建系统",
+    "description": "玩家输入名字，选择初始形象，创建主角角色",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [2]
+  },
+  {
+    "id": 5,
+    "name": "伙伴数据结构设计",
+    "description": "定义伙伴数据结构：ID、名称、阵营、品质、星级、属性、技能",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [3]
+  },
+  {
+    "id": 6,
+    "name": "初始伙伴赠送",
+    "description": "创建初始伙伴：哪吒（橙色）、杨戬（橙色）、雷震子（紫色）",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [5]
+  },
+  {
+    "id": 7,
+    "name": "伙伴界面开发",
+    "description": "伙伴列表、伙伴详情、属性面板界面",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [5]
+  },
+  {
+    "id": 8,
+    "name": "伙伴升级系统",
+    "description": "消耗灵气和金币提升伙伴等级",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [7]
+  },
+  {
+    "id": 9,
+    "name": "伙伴升星系统",
+    "description": "消耗同名碎片提升伙伴星级，解锁被动技能",
+    "status": "pending",
+    "priority": "medium",
+    "dependencies": [7]
+  },
+  {
+    "id": 10,
+    "name": "抽卡系统",
+    "description": "单抽、十连抽卡，概率保底（蓝紫橙红）",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [5]
+  },
+  {
+    "id": 11,
+    "name": "法宝数据结构",
+    "description": "定义法宝数据结构：ID、名称、品质、属性、套装效果",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [3]
+  },
+  {
+    "id": 12,
+    "name": "法宝系统界面",
+    "description": "法宝列表、装备界面、强化界面",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [11]
+  },
+  {
+    "id": 13,
+    "name": "法宝强化系统",
+    "description": "消耗材料和金币强化法宝，提升属性",
+    "status": "pending",
+    "priority": "medium",
+    "dependencies": [12]
+  },
+  {
+    "id": 14,
+    "name": "战斗场景UI",
+    "description": "战斗界面布局：我方阵容、敌方阵容、技能按钮、能量条",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [6]
+  },
+  {
+    "id": 15,
+    "name": "战斗逻辑引擎",
+    "description": "回合制战斗核心逻辑：速度排序、技能释放、伤害计算",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [14]
+  },
+  {
+    "id": 16,
+    "name": "技能系统",
+    "description": "实现普通攻击、主动技能、被动技能、终结技",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [15]
+  },
+  {
+    "id": 17,
+    "name": "属性克制系统",
+    "description": "五行克制：火→木→土→水→金→火，法术>物理",
+    "status": "pending",
+    "priority": "medium",
+    "dependencies": [15]
+  },
+  {
+    "id": 18,
+    "name": "推图章节数据",
+    "description": "设计12章×10关的关卡数据：敌人、难度、掉落",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [3]
+  },
+  {
+    "id": 19,
+    "name": "推图界面",
+    "description": "章节选择、关卡选择、进度显示、星级评价",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [18]
+  },
+  {
+    "id": 20,
+    "name": "关卡战斗流程",
+    "description": "关卡进入→战斗→胜利/失败→结算奖励",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [19, 15]
+  },
+  {
+    "id": 21,
+    "name": "扫荡功能",
+    "description": "通关后可直接扫荡，快速获取资源",
+    "status": "pending",
+    "priority": "medium",
+    "dependencies": [20]
+  },
+  {
+    "id": 22,
+    "name": "资源界面",
+    "description": "灵气、金币、经验、碎片数量显示",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [2]
+  },
+  {
+    "id": 23,
+    "name": "主城/城建界面",
+    "description": "聚灵阵、天材房、论道台、封神台、仙炉建筑界面",
+    "status": "pending",
+    "priority": "medium",
+    "dependencies": [22]
+  },
+  {
+    "id": 24,
+    "name": "建筑升级系统",
+    "description": "消耗资源升级建筑，解锁功能或提升产出",
+    "status": "pending",
+    "priority": "medium",
+    "dependencies": [23]
+  },
+  {
+    "id": 25,
+    "name": "每日签到系统",
+    "description": "连续登录奖励，7天循环周期",
+    "status": "pending",
+    "priority": "medium",
+    "dependencies": [3]
+  },
+  {
+    "id": 26,
+    "name": "每日任务系统",
+    "description": "推图、抽卡等日常任务，完成获得奖励",
+    "status": "pending",
+    "priority": "medium",
+    "dependencies": [3]
+  },
+  {
+    "id": 27,
+    "name": "排行榜界面",
+    "description": "战力榜、关卡榜、地区榜显示",
+    "status": "pending",
+    "priority": "medium",
+    "dependencies": [2]
+  },
+  {
+    "id": 28,
+    "name": "成就系统",
+    "description": "通关章节、收集伙伴等成就解锁和奖励",
+    "status": "pending",
+    "priority": "low",
+    "dependencies": [3]
+  },
+  {
+    "id": 29,
+    "name": "PVP竞技场界面",
+    "description": "论道对战界面，玩家防守阵容设置",
+    "status": "pending",
+    "priority": "low",
+    "dependencies": [15]
+  },
+  {
+    "id": 30,
+    "name": "首充/商城系统",
+    "description": "首充6元送哪吆，月卡30元，商城购买",
+    "status": "pending",
+    "priority": "low",
+    "dependencies": [3]
+  },
+  {
+    "id": 31,
+    "name": "新手引导",
+    "description": "首次游戏的步骤指引，帮助玩家熟悉系统",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [20]
+  },
+  {
+    "id": 32,
+    "name": "音效与动画",
+    "description": "背景音乐、技能特效、战斗动画",
+    "status": "pending",
+    "priority": "low",
+    "dependencies": [15]
+  },
+  {
+    "id": 33,
+    "name": "数据平衡调整",
+    "description": "数值微调：伙伴属性、技能伤害、资源产出",
+    "status": "pending",
+    "priority": "medium",
+    "dependencies": [32]
+  },
+  {
+    "id": 34,
+    "name": "Bug修复与优化",
+    "description": "测试并修复问题，优化性能和体验",
+    "status": "pending",
+    "priority": "high",
+    "dependencies": [33]
+  }
+]
