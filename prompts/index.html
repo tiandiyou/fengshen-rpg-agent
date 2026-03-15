@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>封神榜 - 伐商演义</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        #game-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        .screen {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .screen.active { display: flex; }
+        
+        /* 标题页 */
+        #title-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .title {
+            font-size: 48px;
+            color: #ffd700;
+            text-shadow: 0 0 20px #ff6b00, 0 0 40px #ff6b00;
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px #ff6b00, 0 0 40px #ff6b00; }
+            50% { text-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700; }
+        }
+        
+        /* 按钮 */
+        .btn {
+            background: linear-gradient(180deg, #ff6b00 0%, #c41e3a 100%);
+            border: 2px solid #ffd700;
+            color: #fff;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4);
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(255, 107, 0, 0.6);
+        }
+        
+        /* 角色选择 */
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .char-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .char-card:hover, .char-card.selected {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-5px);
+        }
+        .char-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        .char-name { font-size: 18px; font-weight: bold; color: #ffd700; }
+        .char-desc { font-size: 12px; color: #aaa; margin-top: 5px; }
+        
+        /* 战斗场景 */
+        #battle-screen { background: #0a0a15; }
+        .battle-field {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+        }
+        .enemy-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120px;
+        }
+        .enemy {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(180deg, #4a0000 0%, #2a0000 100%);
+            border: 3px solid #ff4444;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .player-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .player {
+            text-align: center;
+        }
+        .player-sprite {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(180deg, #000460 0%, #000230 100%);
+            border: 2px solid #00aaff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: 0 auto 5px;
+        }
+        .hp-bar {
+            width: 80px;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #88ff00);
+            transition: width 0.3s;
+        }
+        .hp-text {
+            font-size: 12px;
+            margin-top: 3px;
+        }
+        
+        /* 战斗UI */
+        .battle-ui {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .enemy-info {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .enemy-name { font-size: 20px; color: #ff6666; font-weight: bold; }
+        .enemy-hp { font-size: 14px; color: #aaa; }
+        
+        .action-btns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .action-btn {
+            background: linear-gradient(180deg, #0066cc 0%, #003366 100%);
+            border: 1px solid #00aaff;
+            color: #fff;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .action-btn:hover { background: #0077dd; }
+        .action-btn.attack { background: linear-gradient(180deg, #cc3300 0%, #661100 100%); border-color: #ff6600; }
+        .action-btn.skill { background: linear-gradient(180deg, #6600cc 0%, #330066 100%); border-color: #aa44ff; }
+        
+        /* 剧情对话 */
+        #dialog-screen {
+            justify-content: flex-end;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="%231a1a2e" width="100" height="100"/><circle cx="50" cy="50" r="40" fill="%23222"/></svg>');
+        }
+        .dialog-box {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 150px;
+        }
+        .dialog-speaker {
+            color: #ffd700;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .dialog-content {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #eee;
+        }
+        .dialog-continue {
+            text-align: right;
+            margin-top: 15px;
+            color: #888;
+            font-size: 14px;
+        }
+        
+        /* 消息提示 */
+        #message-area {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+        .message {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ffd700;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            animation: fadeInOut 2s forwards;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        /* 伤害数字 */
+        .damage-num {
+            position: absolute;
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff3333;
+            text-shadow: 2px 2px 0 #000;
+            animation: damageFloat 1s forwards;
+            pointer-events: none;
+        }
+        @keyframes damageFloat {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-50px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- 消息提示 -->
+        <div id="message-area"></div>
+        
+        <!-- 标题页 -->
+        <div id="title-screen" class="screen active">
+            <h1 class="title">封神榜</h1>
+            <p class="subtitle">伐商演义 · 回合制RPG</p>
+            <button class="btn" onclick="startGame()">开始游戏</button>
+        </div>
+        
+        <!-- 角色选择 -->
+        <div id="char-select" class="screen">
+            <h2 style="text-align:center;color:#ffd700;margin:20px 0;">选择你的英雄</h2>
+            <div class="char-grid">
+                <div class="char-card" onclick="selectChar(0)">
+                    <div class="char-icon">📜</div>
+                    <div class="char-name">姜子牙</div>
+                    <div class="char-desc">辅助型 · 法术强大</div>
+                </div>
+                <div class="char-card" onclick="selectChar(1)">
+                    <div class="char-icon">🔥</div>
+                    <div class="char-name">哪吒</div>
+                    <div class="char-desc">攻击型 · 暴力输出</div>
+                </div>
+                <div class="char-card" onclick="selectChar(2)">
+                    <div class="char-icon">👁️</div>
+                    <div class="char-name">杨戬</div>
+                    <div class="char-desc">平衡型 · 攻防兼备</div>
+                </div>
+                <div class="char-card" onclick="selectChar(3)">
+                    <div class="char-icon">⚡</div>
+                    <div class="char-name">雷震子</div>
+                    <div class="char-desc">速度型 · 闪电攻击</div>
+                </div>
+            </div>
+            <button class="btn" onclick="confirmChar()">确认选择</button>
+        </div>
+        
+        <!-- 战斗场景 -->
+        <div id="battle-screen" class="screen">
+            <div class="battle-field">
+                <div class="enemy-area">
+                    <div class="enemy" id="enemy-sprite">👹</div>
+                </div>
+                <div class="player-area">
+                    <div class="player">
+                        <div class="player-sprite" id="player-sprite">📜</div>
+                        <div class="hp-bar"><div class="hp-fill" id="player-hp-bar"></div></div>
+                        <div class="hp-text" id="player-hp-text">100/100</div>
+                    </div>
+                </div>
+            </div>
+            <div class="battle-ui">
+                <div class="enemy-info">
+                    <div class="enemy-name" id="enemy-name">申公豹</div>
+                    <div class="enemy-hp" id="enemy-hp">HP: 200/200</div>
+                </div>
+                <div class="action-btns">
+                    <button class="action-btn attack" onclick="playerAttack()">攻击</button>
+                    <button class="action-btn skill" onclick="playerSkill()">技能</button>
+                    <button class="action-btn" onclick="playerDefend()">防御</button>
+                    <button class="action-btn" onclick="playerHeal()">恢复</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 剧情对话 -->
+        <div id="dialog-screen" class="screen">
+            <div class="dialog-box">
+                <div class="dialog-speaker" id="dialog-speaker">姜子牙</div>
+                <div class="dialog-content" id="dialog-content">...</div>
+                <div class="dialog-continue">点击任意处继续 ▼</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏数据
+        const heroes = [
+            { name: '姜子牙', icon: '📜', hp: 100, maxHp: 100, atk: 15, def: 10, speed: 8, skills: ['封神榜', '五行术', '天雷击'] },
+            { name: '哪吒', icon: '🔥', hp: 120, maxHp: 120, atk: 25, def: 5, speed: 12, skills: ['火尖枪', '混天绫', '风火轮'] },
+            { name: '杨戬', icon: '👁️', hp: 110, maxHp: 110, atk: 20, def: 15, speed: 10, skills: ['八九玄功', '三尖两刃刀', '哮天犬'] },
+            { name: '雷震子', icon: '⚡', hp: 90, maxHp: 90, atk: 18, def: 8, speed: 20, skills: ['风雷翅', '雷电击', '雷公锥'] }
+        ];
+        
+        const enemies = [
+            { name: '小妖', icon: '👺', hp: 30, maxHp: 30, atk: 8, exp: 10 },
+            { name: '申公豹', icon: '👹', hp: 200, maxHp: 200, atk: 20, exp: 100 },
+            { name: '纣王', icon: '👑', hp: 500, maxHp: 500, atk: 30, exp: 500 },
+            { name: '妲己', icon: '🦊', hp: 150, maxHp: 150, atk: 25, exp: 80 }
+        ];
+        
+        // 游戏状态
+        let player = null;
+        let currentEnemy = null;
+        let currentDialog = 0;
+        
+        // 剧情线
+        const story = [
+            { speaker: '姜子牙', content: '商朝末年，纣王无道，宠信妲己，残害忠良。天庭震动，元始天尊命我下山辅佐文王，伐商封神！' },
+            { speaker: '姜子牙', content: '贫道算出今日有妖邪挡路，看来是申公豹那逆徒前来阻挠！' },
+            { speaker: '申公豹', content: '姜子牙！休要得意！今日便是你的死期！' },
+            { speaker: '系统', content: '战斗开始！选择你的行动！' }
+        ];
+        
+        // 显示消息
+        function showMessage(text) {
+            const area = document.getElementById('message-area');
+            const msg = document.createElement('div');
+            msg.className = 'message';
+            msg.textContent = text;
+            area.appendChild(msg);
+            setTimeout(() => msg.remove(), 2000);
+        }
+        
+        // 切换画面
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+        
+        // 开始游戏
+        function startGame() {
+            showScreen('char-select');
+        }
+        
+        // 选择角色
+        let selectedChar = 0;
+        function selectChar(index) {
+            selectedChar = index;
+            document.querySelectorAll('.char-card').forEach((card, i) => {
+                card.classList.toggle('selected', i === index);
+            });
+        }
+        
+        // 确认角色
+        function confirmChar() {
+            player = { ...heroes[selectedChar] };
+            document.getElementById('player-sprite').textContent = player.icon;
+            startBattle(0);
+        }
+        
+        // 开始战斗
+        function startBattle(enemyIndex) {
+            currentEnemy = { ...enemies[enemyIndex] };
+            document.getElementById('enemy-sprite').textContent = currentEnemy.icon;
+            document.getElementById('enemy-name').textContent = currentEnemy.name;
+            updateBattleUI();
+            showScreen('battle-screen');
+            
+            if (enemyIndex === 0) {
+                startDialog();
+            }
+        }
+        
+        // 更新战斗UI
+        function updateBattleUI() {
+            const playerHpPercent = (player.hp / player.maxHp) * 100;
+            document.getElementById('player-hp-bar').style.width = playerHpPercent + '%';
+            document.getElementById('player-hp-text').textContent = `${player.hp}/${player.maxHp}`;
+            
+            const enemyHpPercent = (currentEnemy.hp / currentEnemy.maxHp) * 100;
+            document.getElementById('enemy-hp').textContent = `HP: ${currentEnemy.hp}/${currentEnemy.maxHp}`;
+        }
+        
+        // 玩家攻击
+        function playerAttack() {
+            const damage = Math.max(1, player.atk - 5 + Math.floor(Math.random() * 10));
+            currentEnemy.hp -= damage;
+            showDamage(damage, 'enemy');
+            showMessage(`${player.name} 攻击了 ${currentEnemy.name}！`);
+            
+            if (currentEnemy.hp <= 0) {
+                setTimeout(() => winBattle(), 500);
+            } else {
+                setTimeout(() => enemyTurn(), 500);
+            }
+            updateBattleUI();
+        }
+        
+        // 玩家技能
+        function playerSkill() {
+            const skillName = player.skills[0];
+            const damage = Math.max(1, player.atk * 2 + Math.floor(Math.random() * 15));
+            currentEnemy.hp -= damage;
+            showDamage(damage, 'enemy');
+            showMessage(`${player.name} 使用了 ${skillName}！`);
+            
+            if (currentEnemy.hp <= 0) {
+                setTimeout(() => winBattle(), 500);
+            } else {
+                setTimeout(() => enemyTurn(), 500);
+            }
+            updateBattleUI();
+        }
+        
+        // 玩家防御
+        function playerDefend() {
+            showMessage(`${player.name} 进入防御姿态！`);
+            setTimeout(() => enemyTurn(true), 500);
+        }
+        
+        // 玩家恢复
+        function playerHeal() {
+            const heal = Math.floor(player.maxHp * 0.3);
+            player.hp = Math.min(player.maxHp, player.hp + heal);
+            showMessage(`${player.name} 恢复了 ${heal} 点生命！`);
+            setTimeout(() => enemyTurn(), 500);
+            updateBattleUI();
+        }
+        
+        // 显示伤害数字
+        function showDamage(amount, target) {
+            const el = document.createElement('div');
+            el.className = 'damage-num';
+            el.textContent = '-' + amount;
+            el.style.left = target === 'enemy' ? '50%' : '30%';
+            el.style.top = target === 'enemy' ? '40%' : '60%';
+            document.getElementById('battle-screen').appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+        
+        // 敌人回合
+        function enemyTurn(defending = false) {
+            const damage = Math.max(1, currentEnemy.atk - (defending ? player.def : 0) + Math.floor(Math.random() * 8));
+            player.hp -= damage;
+            showDamage(damage, 'player');
+            showMessage(`${currentEnemy.name} 攻击了 ${player.name}！`);
+            
+            if (player.hp <= 0) {
+                showMessage('你被打败了...');
+                setTimeout(() => {
+                    player.hp = player.maxHp;
+                    showScreen('title-screen');
+                }, 2000);
+            }
+            updateBattleUI();
+        }
+        
+        // 战斗胜利
+        function winBattle() {
+            showMessage(`胜利！获得 ${currentEnemy.exp} 经验值！`);
+            
+            if (currentEnemy.name === '小妖') {
+                setTimeout(() => startBattle(1), 1500);
+            } else if (currentEnemy.name === '申公豹') {
+                setTimeout(() => {
+                    showScreen('title-screen');
+                    showMessage('第一幕完！感谢试玩~');
+                }, 1500);
+            }
+        }
+        
+        // 剧情对话
+        function startDialog() {
+            currentDialog = 0;
+            showDialog();
+        }
+        
+        function showDialog() {
+            if (currentDialog >= story.length) {
+                showScreen('battle-screen');
+                return;
+            }
+            const d = story[currentDialog];
+            document.getElementById('dialog-speaker').textContent = d.speaker;
+            document.getElementById('dialog-content').textContent = d.content;
+        }
+        
+        // 点击继续对话
+        document.getElementById('dialog-screen').addEventListener('click', () => {
+            currentDialog++;
+            showDialog();
+        });
+    </script>
+</body>
+</html>

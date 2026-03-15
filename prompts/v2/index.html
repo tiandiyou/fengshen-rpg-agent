@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>封神榜 - 伐商演义 V2</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:"Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);min-height:100vh;color:#fff}#game-container{max-width:480px;margin:0 auto;min-height:100vh;position:relative;overflow:hidden}.screen{display:none;min-height:100vh;flex-direction:column;padding:15px}.screen.active{display:flex}.title-main{font-size:42px;color:#ffd700;text-shadow:0 0 20px #ff6b00,0 0 40px #ff6b00;text-align:center;margin:30px 0 10px;animation:glow 2s ease-in-out infinite}@keyframes glow{0%,100%{text-shadow:0 0 20px #ff6b00,0 0 40px #ff6b00}50%{text-shadow:0 0 30px #ffd700,0 0 60px #ffd700}}.btn{background:linear-gradient(180deg,#ff6b00,#c41e3a);border:2px solid #ffd700;color:#fff;padding:12px 30px;font-size:18px;border-radius:25px;cursor:pointer;margin:8px;transition:all .2s;box-shadow:0 4px 15px rgba(255,107,0,.4)}.btn:hover{transform:scale(1.05)}.btn-small{padding:8px 20px;font-size:14px}.btn-secondary{background:linear-gradient(180deg,#0066cc,#003366);border-color:#00aaff}#title-screen{justify-content:center;align-items:center}.title-sub{font-size:16px;color:#aaa;margin-bottom:30px}.version{position:absolute;bottom:20px;color:#666;font-size:12px}.char-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:15px 0}.char-card{background:rgba(255,255,255,.1);border:2px solid #444;border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:all .3s}.char-card:hover,.char-card.selected{border-color:#ffd700;background:rgba(255,215,0,.2);transform:translateY(-3px)}.char-icon{font-size:36px;margin-bottom:8px}.char-name{font-size:16px;font-weight:bold;color:#ffd700}.char-desc{font-size:11px;color:#aaa;margin-top:4px}.char-stats{font-size:10px;color:#888;margin-top:4px}.status-bar{background:rgba(0,0,0,.7);border-radius:10px;padding:10px 15px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}.player-info{display:flex;align-items:center;gap:10px}.player-icon{font-size:28px}.player-details{font-size:12px}.player-level{color:#ffd700;font-weight:bold}.player-hp{color:#ff6666}.player-exp{color:#88ff00}.map-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}.map-card{background:linear-gradient(180deg,#2a2a4a,#1a1a3a);border:2px solid #444;border-radius:10px;padding:15px;text-align:center;cursor:pointer;transition:all .3s}.map-card:hover{border-color:#00aaff;transform:scale(1.02)}.map-card.unlocked{border-color:#00ff88}.map-card.current{border-color:#ffd700;box-shadow:0 0 15px rgba(255,215,0,.3)}.map-icon{font-size:32px;margin-bottom:5px}.map-name{font-size:14px;font-weight:bold;color:#fff}.map-desc{font-size:10px;color:#888}.map-status{font-size:10px;color:#ffd700;margin-top:5px;padding:2px 8px;background:rgba(255,215,0,.2);border-radius:10px;display:inline-block}#battle-screen{background:#0a0a15}.battle-field{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:10px}.enemy-area{display:flex;justify-content:center;align-items:center;height:100px}.enemy{width:90px;height:90px;background:linear-gradient(180deg,#4a0000,#2a0000);border:3px solid #ff4444;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:45px;animation:shake .5s ease-in-out}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.player-battle-area{display:flex;justify-content:center;gap:20px;margin:10px 0}.player-battle{text-align:center}.player-sprite-battle{width:50px;height:50px;background:linear-gradient(180deg,#000460,#000230);border:2px solid #00aaff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 5px}.hp-bar{width:60px;height:6px;background:#333;border-radius:3px;margin:0 auto;overflow:hidden}.hp-fill{height:100%;background:linear-gradient(90deg,#00ff00,#88ff00);transition:width .3s}.battle-ui{background:rgba(0,0,0,.85);border-radius:12px;padding:12px}.enemy-info{text-align:center;margin-bottom:8px}.enemy-name-battle{font-size:18px;color:#ff6666;font-weight:bold}.enemy-hp-battle{font-size:12px;color:#aaa}.action-btns{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.action-btn{background:linear-gradient(180deg,#0066cc,#003366);border:1px solid #00aaff;color:#fff;padding:10px;font-size:14px;border-radius:8px;cursor:pointer}.action-btn:hover{background:#0077dd}.action-btn.attack{background:linear-gradient(180deg,#cc3300,#661100);border-color:#ff6600}.action-btn.skill{background:linear-gradient(180deg,#6600cc,#330066);border-color:#aa44ff}.action-btn.heal{background:linear-gradient(180deg,#00aa44,#005522);border-color:#44ff88}.dialog-box{background:rgba(0,0,0,.95);border:2px solid #ffd700;border-radius:10px;padding:15px;min-height:120px}.dialog-speaker{color:#ffd700;font-size:16px;font-weight:bold;margin-bottom:8px}.dialog-content{font-size:14px;line-height:1.6;color:#eee}.dialog-continue{text-align:right;margin-top:10px;color:#888;font-size:12px}#message-area{position:fixed;top:15px;left:50%;transform:translateX(-50%);z-index:100;width:90%}.message{background:rgba(0,0,0,.95);border:2px solid #ffd700;padding:12px 20px;border-radius:10px;font-size:16px;text-align:center;animation:fadeInOut 2s forwards}@keyframes fadeInOut{0%{opacity:0;transform:translateY(-20px)}20%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0}}.damage-num{position:absolute;font-size:24px;font-weight:bold;color:#ff3333;text-shadow:2px 2px 0 #000;animation:damageFloat .8s forwards;pointer-events:none}@keyframes damageFloat{0%{opacity:1;transform:translateY(0) scale(1.2)}100%{opacity:0;transform:translateY(-40px) scale(1)}}.equip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.equip-card{background:rgba(255,255,255,.1);border:1px solid #444;border-radius:8px;padding:10px;text-align:center}.equip-card.equipped{border-color:#ffd700;background:rgba(255,215,0,.15)}.equip-icon{font-size:24px}.equip-name{font-size:11px;color:#fff;margin:4px 0}.equip-bonus{font-size:10px;color:#88ff00}.shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}.shop-item{background:rgba(255,255,255,.1);border:1px solid #444;border-radius:8px;padding:12px;text-align:center;cursor:pointer}.shop-item.owned{opacity:.5}.shop-item:hover:not(.owned){border-color:#ffd700}.shop-icon{font-size:28px}.shop-name{font-size:12px;color:#fff;margin:4px 0}.shop-price{font-size:11px;color:#ffd700}.shop-desc{font-size:10px;color:#888}.menu-btns{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:15px}.chapter-end{text-align:center;padding:30px}.chapter-title{font-size:28px;color:#ffd700;margin-bottom:20px}.chapter-reward{font-size:16px;color:#88ff00;margin:15px 0}
+    </style>
+</head>
+<body>
+<div id="game-container">
+    <div id="message-area"></div>
+    <div id="title-screen" class="screen active">
+        <h1 class="title-main">封神榜</h1>
+        <p class="title-sub">伐商演义 · 回合制RPG</p>
+        <button class="btn" onclick="startGame()">开始游戏</button>
+        <p class="version">v2.0 完整版</p>
+    </div>
+    <div id="char-select" class="screen">
+        <h2 style="text-align:center;color:#ffd700;margin:15px 0;">选择你的英雄</h2>
+        <div class="char-grid">
+            <div class="char-card" onclick="selectChar(0)"><div class="char-icon">📜</div><div class="char-name">姜子牙</div><div class="char-desc">辅助型 · 法术强大</div><div class="char-stats">攻击★☆ 防御★★ 速度★☆</div></div>
+            <div class="char-card selected" onclick="selectChar(1)"><div class="char-icon">🔥</div><div class="char-name">哪吒</div><div class="char-desc">攻击型 · 暴力输出</div><div class="char-stats">★★★ 攻击 ★ 防御</div></div>
+            <div class="char-card" onclick="selectChar(2)"><div class="char-icon">👁️</div><div class="char-name">杨戬</div><div class="char-desc">平衡型 · 攻防兼备</div><div class="char-stats">★★ 攻击 ★★ 防御</div></div>
+            <div class="char-card" onclick="selectChar(3)"><div class="char-icon">⚡</div><div class="char-name">雷震子</div><div class="char-desc">速度型 · 闪电攻击</div><div class="char-stats">★★★ 速度</div></div>
+        </div>
+        <button class="btn" onclick="confirmChar()">确认选择</button>
+    </div>
+    <div id="map-screen" class="screen">
+        <div class="status-bar">
+            <div class="player-info">
+                <div class="player-icon" id="map-player-icon">🔥</div>
+                <div class="player-details">
+                    <div class="player-level" id="map-player-name">哪吒 Lv.1</div>
+                    <div class="player-hp">HP: <span id="map-player-hp">120</span>/<span id="map-player-maxhp">120</span></div>
+                    <div class="player-exp">经验: <span id="map-player-exp">0</span>/100</div>
+                </div>
+            </div>
+            <div style="text-align:right"><div style="color:#ffd700;font-size:14px;">💰 <span id="map-gold">0</span></div></div>
+        </div>
+        <h3 style="color:#00aaff;margin:10px 0;">选择关卡</h3>
+        <div class="map-grid" id="map-grid"></div>
+        <div class="menu-btns">
+            <button class="btn btn-small btn-secondary" onclick="showEquip()">🎒 装备</button>
+            <button class="btn btn-small btn-secondary" onclick="showShop()">🏪 商店</button>
+        </div>
+    </div>
+    <div id="battle-screen" class="screen">
+        <div class="battle-field">
+            <div class="enemy-area"><div class="enemy" id="enemy-sprite">👹</div></div>
+            <div class="player-battle-area">
+                <div class="player-battle"><div class="player-sprite-battle" id="player-sprite-battle">🔥</div><div class="hp-bar"><div class="hp-fill" id="player-hp-bar"></div></div></div>
+            </div>
+        </div>
+        <div class="battle-ui">
+            <div class="enemy-info"><div class="enemy-name-battle" id="enemy-name-battle">申公豹</div><div class="enemy-hp-battle" id="enemy-hp-battle">HP: 200/200</div></div>
+            <div class="action-btns">
+                <button class="action-btn attack" onclick="playerAttack()">⚔️ 攻击</button>
+                <button class="action-btn skill" onclick="playerSkill()">✨ 技能</button>
+                <button class="action-btn" onclick="playerDefend()">🛡️ 防御</button>
+                <button class="action-btn heal" onclick="playerHeal()">💚 恢复</button>
+            </div>
+        </div>
+    </div>
+    <div id="dialog-screen" class="screen">
+        <div class="dialog-box" onclick="nextDialog()">
+            <div class="dialog-speaker" id="dialog-speaker">姜子牙</div>
+            <div class="dialog-content" id="dialog-content">...</div>
+            <div class="dialog-continue">点击任意处继续 ▼</div>
+        </div>
+    </div>
+    <div id="equip-screen" class="screen">
+        <h2 style="text-align:center;color:#ffd700;margin:15px 0;">🎒 装备栏</h2>
+        <div class="equip-grid" id="equip-grid"></div>
+        <button class="btn" onclick="showMap()">返回地图</button>
+    </div>
+    <div id="shop-screen" class="screen">
+        <h2 style="text-align:center;color:#ffd700;margin:15px 0;">🏪 仙宝阁</h2>
+        <p style="text-align:center;color:#aaa;margin-bottom:10px;">💰 金币: <span id="shop-gold">0</span></p>
+        <div class="shop-grid" id="shop-grid"></div>
+        <button class="btn" onclick="showMap()">返回地图</button>
+    </div>
+    <div id="chapter-end-screen" class="screen">
+        <div class="chapter-end"><div class="chapter-title" id="chapter-title">第一章 · 完</div><p id="chapter-desc">恭喜通关！</p><div class="chapter-reward" id="chapter-reward">获得奖励：金币×100</div><button class="btn" onclick="showMap()">返回地图</button></div>
+    </div>
+</div>
+<script>
+const heroes=[{name:'姜子牙',icon:'📜',hp:100,maxHp:100,atk:15,def:10,speed:8,skills:['封神榜','五行术','天雷击']},{name:'哪吒',icon:'🔥',hp:120,maxHp:120,atk:25,def:5,speed:12,skills:['火尖枪','混天绫','风火轮']},{name:'杨戬',icon:'👁️',hp:110,maxHp:110,atk:20,def:15,speed:10,skills:['八九玄功','三尖两刃刀','哮天犬']},{name:'雷震子',icon:'⚡',hp:90,maxHp:90,atk:18,def:8,speed:20,skills:['风雷翅','雷电击','雷公锥']}];
+const maps=[{id:0,name:'陈塘关',icon:'🏯',desc:'哪吒故乡',enemies:['巡海夜叉','三太子敖丙'],boss:'东海龙王',exp:50},{id:1,name:'阐教洞府',icon:'⛰️',desc:'元始天尊道场',enemies:['小妖','青毛狮'],boss:'申公豹',exp:80},{id:2,name:'朝歌城',icon:'🏰',desc:'商朝都城',enemies:['纣王禁卫','妲己侍从'],boss:'纣王',exp:120},{id:3,name:'摘星楼',icon:'🌙',desc:'纣王宫殿',enemies:['妖狐卫士','太师闻仲'],boss:'闻仲',exp:150},{id:4,name:'战场',icon:'⚔️',desc:'终极决战',enemies:['张桂芳','魔家四将'],boss:'孔宣',exp:200}];
+const allEnemies={'巡海夜叉':{icon:'👺',hp:40,atk:12,exp:15,gold:10},'三太子敖丙':{icon:'🐉',hp:80,atk:18,exp:30,gold:25},'东海龙王':{icon:'🐲',hp:200,atk:25,exp:60,gold:50},'小妖':{icon:'👺',hp:30,atk:8,exp:10,gold:8},'青毛狮':{icon:'🦁',hp:60,atk:15,exp:20,gold:15},'申公豹':{icon:'👹',hp:180,atk:22,exp:50,gold:40},'纣王禁卫':{icon:'💂',hp:70,atk:20,exp:25,gold:20},'妲己侍从':{icon:'👩',hp:50,atk:18,exp:18,gold:15},'纣王':{icon:'👑',hp:350,atk:30,exp:120,gold:80},'妖狐卫士':{icon:'🦊',hp:65,atk:22,exp:22,gold:18},'太师闻仲':{icon:'👴',hp:250,atk:28,exp:80,gold:60},'闻仲':{icon:'👴',hp:300,atk:30,exp:100,gold:70},'张桂芳':{icon:'⚔️',hp:100,atk:25,exp:35,gold:30},'魔家四将':{icon:'👺',hp:150,atk:28,exp:60,gold:50},'孔宣':{icon:'🦚',hp:450,atk:38,exp:180,gold:120}};
+const equipment=[{id:0,name:'打神鞭',icon:'📿',type:'weapon',atk:10,price:100},{id:1,name:'火尖枪',icon:'🔱',type:'weapon',atk:15,price:150},{id:2,name:'三尖刀',icon:'⚔️',type:'weapon',atk:12,price:120},{id:3,name:'八卦仙衣',icon:'👘',type:'armor',def:10,price:100},{id:4,name:'混天绫',icon:'🧣',type:'armor',def:6,price:80},{id:5,name:'风火轮',icon:'🔥',type:'acc',speed:8,price:150},{id:6,name:'定海珠',icon:'💎',type:'acc',atk:8,price:180}];
+const stories={0:[{speaker:'旁白',content:'陈塘关外，波涛汹涌。哪吒正在海边游玩...'},{speaker:'哪吒',content:'这东海之水，为何如此汹涌？'},{speaker:'巡海夜叉',content:'何人在此喧哗！'}],1:[{speaker:'旁白',content:'阐教洞府，元始天尊道场。'},{speaker:'姜子牙',content:'师父，弟子已学成下山。'},{speaker:'申公豹',content:'姜子牙！今日我便要与你一决高下！'}],2:[{speaker:'旁白',content:'朝歌城，商朝都城。'},{speaker:'纣王',content:'逆贼姜子牙！竟敢闯入孤的王宫！'}],3:[{speaker:'旁白',content:'摘星楼上，纣王与妲己饮酒作乐。'},{speaker:'闻仲',content:'姜子牙，休要放肆！'}],4:[{speaker:'旁白',content:'商周战场，两军对垒！'},{speaker:'孔宣',content:'姜子牙，你可知本座是谁？'}]};
+let player=null,currentMap=0,currentEnemy=null,currentDialog=[],dialogIndex=0;
+let gameData={level:1,exp:0,expToLevel:100,gold:0,equipment:[-1,-1,-1],ownedEquip:[],unlockedMaps:0};
+let battlePhase=0;
+function showMessage(t){const m=document.createElement('div');m.className='message';m.textContent=t;document.getElementById('message-area').appendChild(m);setTimeout(()=>m.remove(),2000);}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function startGame(){showScreen('char-select');}
+let selectedChar=1;
+function selectChar(i){selectedChar=i;document.querySelectorAll('.char-card').forEach((c,j)=>c.classList.toggle('selected',j===i));}
+function confirmChar(){player={...heroes[selectedChar]};player.hp=player.maxHp;gameData={level:1,exp:0,expToLevel:100,gold:0,equipment:[-1,-1,-1],ownedEquip:[],unlockedMaps:0};showMap();}
+function showMap(){
+    document.getElementById('map-player-icon').textContent=player.icon;
+    document.getElementById('map-player-name').textContent=player.name+' Lv.'+gameData.level;
+    document.getElementById('map-player-hp').textContent=Math.floor(player.hp);
+    document.getElementById('map-player-maxhp').textContent=player.maxHp;
+    document.getElementById('map-player-exp').textContent=gameData.exp;
+    document.getElementById('map-gold').textContent=gameData.gold;
+    const g=document.getElementById('map-grid');g.innerHTML='';
+    maps.forEach((m,i)=>{const d=document.createElement('div');d.className='map-card'+(i<=gameData.unlockedMaps?' unlocked':'')+(i===gameData.unlockedMaps?' current':'');d.innerHTML=`<div class="map-icon">${m.icon}</div><div class="map-name">${m.name}</div><div class="map-desc">${m.desc}</div><div class="map-status">${i<=gameData.unlockedMaps?(i===gameData.unlockedMaps?'▶️ 进行中':'✅ 已完成'):'🔒 未解锁'}</div>`;d.onclick=()=>{if(i<=gameData.unlockedMaps){currentMap=i;battlePhase=0;startBattle();}};g.appendChild(d);});
+    showScreen('map-screen');
+}
+function startBattle(){
+    const m=maps[currentMap];let enemyName;
+    if(battlePhase===0)enemyName=m.enemies[Math.floor(Math.random()*m.enemies.length)];
+    else if(battlePhase===1)enemyName=m.enemies[Math.floor(Math.random()*m.enemies.length)];
+    else enemyName=m.boss;
+    const e=allEnemies[enemyName];
+    currentEnemy={name:enemyName,...e,maxHp:e.hp};
+    document.getElementById('enemy-sprite').textContent=currentEnemy.icon;
+    document.getElementById('enemy-name-battle').textContent=currentEnemy.name;
+    if(stories[currentMap]&&stories[currentMap].length>0&&battlePhase===0){currentDialog=stories[currentMap];dialogIndex=0;showDialog();}else{showBattle();}
+}
+function showDialog(){if(dialogIndex>=currentDialog.length){showBattle();return}document.getElementById('dialog-speaker').textContent=currentDialog[dialogIndex].speaker;document.getElementById('dialog-content').textContent=currentDialog[dialogIndex].content;showScreen('dialog-screen');}
+function nextDialog(){dialogIndex++;showDialog();}
+function showBattle(){updateBattleUI();showScreen('battle-screen');}
+function updateBattleUI(){const pp=(player.hp/player.maxHp)*100;document.getElementById('player-hp-bar').style.width=pp+'%';document.getElementById('enemy-hp-battle').textContent='HP: '+currentEnemy.hp+'/'+currentEnemy.maxHp;}
+function getAtk(){let a=player.atk;if(gameData.equipment[0]>=0){const e=equipment[gameData.equipment[0]];if(e.atk)a+=e.atk}return a}
+function getDef(){let d=player.def;if(gameData.equipment[1]>=0){const e=equipment[gameData.equipment[1]];if(e.def)d+=e.def}return d}
+function playerAttack(){const dmg=Math.max(1,getAtk()+Math.floor(Math.random()*10)-5);currentEnemy.hp-=dmg;showDamage(dmg);document.getElementById('enemy-sprite').classList.add('enemy');setTimeout(()=>document.getElementById('enemy-sprite').classList.remove('enemy'),300);showMessage(player.name+' 攻击了 '+currentEnemy.name+'！');if(currentEnemy.hp<=0){setTimeout(winBattle,500)}else{setTimeout(enemyTurn,500)}updateBattleUI()}
+function playerSkill(){const sk=player.skills[Math.floor(Math.random()*player.skills.length)];const dmg=Math.max(1,getAtk()*2+Math.floor(Math.random()*15));currentEnemy.hp-=dmg;showDamage(dmg);showMessage(player.name+' 使用了 '+sk+'！');if(currentEnemy.hp<=0){setTimeout(winBattle,500)}else{setTimeout(enemyTurn,500)}updateBattleUI()}
+function playerDefend(){showMessage(player.name+' 进入防御姿态！');setTimeout(()=>enemyTurn(true),500)}
+function playerHeal(){const h=Math.floor(player.maxHp*.35);player.hp=Math.min(player.maxHp,player.hp+h);showMessage(player.name+' 恢复了 '+h+' 点生命！');setTimeout(()=>enemyTurn(),500);updateBattleUI()}
+function showDamage(amt){const d=document.createElement('div');d.className='damage-num';d.textContent='-'+amt;d.style.left='50%';d.style.top='35%';document.getElementById('battle-screen').appendChild(d);setTimeout(()=>d.remove(),800)}
+function enemyTurn(defending=false){const dmg=Math.max(1,currentEnemy.atk-(defending?getDef():0)+Math.floor(Math.random()*8));player.hp-=dmg;showDamage(dmg);showMessage(currentEnemy.name+' 攻击了 '+player.name+'！');if(player.hp<=0){showMessage('你被打败了...');setTimeout(()=>{player.hp=player.maxHp;showMap()},1500)}else{battlePhase++;if(battlePhase>=3){currentEnemy.hp=0;winBattle()}else{startBattle()}}updateBattleUI()}
+function winBattle(){const expGain=currentEnemy.exp||50;const goldGain=currentEnemy.gold||20;gameData.exp+=expGain;gameData.gold+=goldGain;showMessage('胜利！+'+expGain+'经验 '+goldGain+'金币');if(gameData.exp>=gameData.expToLevel){gameData.level++;gameData.exp-=gameData.expToLevel;gameData.expToLevel=Math.floor(gameData.expToLevel*1.3);player.maxHp+=10;player.atk+=2;player.hp=player.maxHp;showMessage('升级了！现在是 Lv.'+gameData.level)}if(battlePhase>=2||currentEnemy.name===maps[currentMap].boss){if(currentMap>=gameData.unlockedMaps&&currentMap<maps.length-1)gameData.unlockedMaps=currentMap+1;setTimeout(()=>{document.getElementById('chapter-title').textContent='第'+(currentMap+1)+'章 · 完';document.getElementById('chapter-reward').textContent='获得金币×'+(50+currentMap*20);showScreen('chapter-end-screen')},1000)}else{battlePhase++;setTimeout(startBattle,1000)}}
+function showEquip(){const g=document.getElementById('equip-grid');g.innerHTML='';const types=['weapon','armor','acc'];const names=['武器','防具','饰品'];types.forEach((t,i)=>{const e=gameData.equipment[i]>=0?equipment[gameData.equipment[i]]:null;const div=document.createElement('div');div.className='equip-card'+(e?' equipped':'');div.innerHTML=`<div class="equip-icon">${e?e.icon:'📦'}</div><div class="equip-name">${e?e.name:'未装备'}</div><div class="equip-bonus">${e?(e.atk?'攻击+'+e.atk:e.def?'防御+'+e.def:'速度+'+e.speed):names[i]}</div>`;g.appendChild(div)});document.getElementById('shop-gold').textContent=gameData.gold;showScreen('equip-screen')}
+function showShop(){document.getElementById('shop-gold').textContent=gameData.gold;const g=document.getElementById('shop-grid');g.innerHTML='';equipment.forEach((e,i)=>{const owned=gameData.ownedEquip.includes(e.id);const div=document.createElement('div');div.className='shop-item'+(owned?' owned':'');div.innerHTML=`<div class="shop-icon">${e.icon}</div><div class="shop-name">${e.name}</div><div class="shop-price">💰${e.price}</div><div class="shop-desc">${e.atk?'攻击+'+(e.atk||0):e.def?'防御+'+(e.def||0):'速度+'+(e.speed||0)}</div>`;if(!owned)div.onclick=()=>buyEquip(e);g.appendChild(div)});showScreen('shop-screen')}
+function buyEquip(e){if(gameData.gold>=e.price){gameData.gold-=e.price;gameData.ownedEquip.push(e.id);if(e.type==='weapon')gameData.equipment[0]=e.id;else if(e.type==='armor')gameData.equipment[1]=e.id;else gameData.equipment[2]=e.id;player.atk+=e.atk||0;player.def+=e.def||0;showMessage('购买了 '+e.name+'！');showShop()}else{showMessage('金币不足！')}}
+</script>
+</body>
+</html>

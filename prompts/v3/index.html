@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>封神榜 - 伐商演义 V3</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:"Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);min-height:100vh;color:#fff}#game-container{max-width:480px;margin:0 auto;min-height:100vh;position:relative}.screen{display:none;min-height:100vh;flex-direction:column;padding:15px}.screen.active{display:flex}.title-main{font-size:42px;color:#ffd700;text-shadow:0 0 20px #ff6b00;text-align:center;margin:30px 0}.btn{background:linear-gradient(180deg,#ff6b00,#c41e3a);border:2px solid #ffd700;color:#fff;padding:12px 30px;font-size:18px;border-radius:25px;cursor:pointer;margin:8px}.btn-small{padding:8px 16px;font-size:13px}.btn-secondary{background:linear-gradient(180deg,#0066cc,#003366);border-color:#00aaff}.btn-purple{background:linear-gradient(180deg,#6600cc,#330066);border-color:#aa44ff}.bg-box{background:rgba(0,0,0,0.7);border-radius:10px;padding:15px;margin:10px 0}.char-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.char-card{background:rgba(255,255,255,0.1);border:2px solid #444;border-radius:12px;padding:12px;text-align:center;cursor:pointer}.char-card.selected{border-color:#ffd700;background:rgba(255,215,0,0.2)}.map-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.map-card{background:linear-gradient(180deg,#2a2a4a,#1a1a3a);border:2px solid #444;border-radius:10px;padding:15px;text-align:center;cursor:pointer}.map-card.current{border-color:#ffd700}.action-btns{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.action-btn{background:linear-gradient(180deg,#0066cc,#003366);border:1px solid #00aaff;color:#fff;padding:10px;border-radius:8px;cursor:pointer}.action-btn.attack{background:linear-gradient(180deg,#cc3300,#661100)}.action-btn.skill{background:linear-gradient(180deg,#6600cc,#330066)}.action-btn.heal{background:linear-gradient(180deg,#00aa44,#005522)}.message{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.95);border:2px solid #ffd700;padding:12px 20px;border-radius:10px;font-size:16px;z-index:100;animation:fadeInOut 2s forwards}@keyframes fadeInOut{0%{opacity:0}20%{opacity:1}80%{opacity:1}100%{opacity:0}}.damage{position:absolute;font-size:24px;color:#ff3333;animation:float 0.8s forwards}@keyframes float{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-40px)}}</style>
+</head>
+<body>
+<div id="game-container">
+<div id="message-area"></div>
+<div id="title-screen" class="screen active">
+<h1 class="title-main">封神榜</h1>
+<p style="text-align:center;color:#aaa">伐商演义 · 回合制RPG</p>
+<button class="btn" onclick="startGame()">开始游戏</button>
+<p>v3.0 完整版</p>
+</div>
+<div id="char-select" class="screen">
+<h2 style="text-align:center;color:#ffd700">选择你的英雄</h2>
+<div class="char-grid bg-box">
+<div class="char-card" onclick="selectChar(0)"><div style="font-size:36px">📜</div><div style="color:#ffd700;font-weight:bold">姜子牙</div><div style="font-size:11px;color:#aaa">辅助型</div></div>
+<div class="char-card selected" onclick="selectChar(1)"><div style="font-size:36px">🔥</div><div style="color:#ffd700;font-weight:bold">哪吒</div><div style="font-size:11px;color:#aaa">攻击型</div></div>
+<div class="char-card" onclick="selectChar(2)"><div style="font-size:36px">👁️</div><div style="color:#ffd700;font-weight:bold">杨戬</div><div style="font-size:11px;color:#aaa">平衡型</div></div>
+<div class="char-card" onclick="selectChar(3)"><div style="font-size:36px">⚡</div><div style="color:#ffd700;font-weight:bold">雷震子</div><div style="font-size:11px;color:#aaa">速度型</div></div>
+</div>
+<button class="btn" onclick="confirmChar()">确认</button>
+</div>
+<div id="map-screen" class="screen">
+<div class="bg-box" style="display:flex;justify-content:space-between;align-items:center">
+<div style="display:flex;align-items:center;gap:10px"><div id="map-icon" style="font-size:28px">🔥</div><div><div id="map-name" style="color:#ffd700;font-weight:bold">哪吒 Lv.1</div><div style="color:#ff6666">HP: <span id="map-hp">120</span>/120</div><div style="color:#88ff00">EXP: <span id="map-exp">0</span>/100</div></div></div>
+<div style="color:#ffd700;font-size:18px">💰 <span id="map-gold">0</span></div>
+</div>
+<h3 style="color:#00aaff;margin:10px 0">选择关卡</h3>
+<div class="map-grid" id="map-grid"></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px">
+<button class="btn btn-small btn-secondary" onclick="showEquip()">🎒</button>
+<button class="btn btn-small btn-purple" onclick="showSkills()">✨</button>
+<button class="btn btn-small btn-secondary" onclick="showAchieve()">🏆</button>
+<button class="btn btn-small btn-secondary" onclick="showShop()">🏪</button>
+</div>
+</div>
+<div id="battle-screen" class="screen" style="background:#0a0a15">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
+<div style="display:flex;justify-content:center;align-items:center;height:100px"><div id="enemy-sprite" style="width:90px;height:90px;background:linear-gradient(180deg,#4a0000,#2a0000);border:3px solid #ff4444;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:45px">👹</div></div>
+<div style="display:flex;justify-content:center"><div style="width:50px;height:50px;background:linear-gradient(180deg,#000460,#000230);border:2px solid #00aaff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px" id="player-sprite">🔥</div></div>
+</div>
+<div class="bg-box">
+<div id="enemy-name" style="color:#ff6666;font-weight:bold;text-align:center;font-size:18px">申公豹</div>
+<div id="enemy-hp" style="color:#aaa;text-align:center;font-size:12px">HP: 200/200</div>
+<div class="action-btns" style="margin-top:10px">
+<button class="action-btn attack" onclick="playerAttack()">⚔️ 攻击</button>
+<button class="action-btn skill" onclick="playerSkill()">✨ 技能</button>
+<button class="action-btn" onclick="playerDefend()">🛡️ 防御</button>
+<button class="action-btn heal" onclick="playerHeal()">💚 恢复</button>
+</div>
+</div>
+</div>
+<div id="skill-screen" class="screen">
+<h2 style="text-align:center;color:#aa44ff">✨ 技能列表</h2>
+<div class="bg-box" id="skill-list"></div>
+<button class="btn" onclick="showMap()">返回</button>
+</div>
+<div id="equip-screen" class="screen">
+<h2 style="text-align:center;color:#ffd700">🎒 装备栏</h2>
+<div class="bg-box" id="equip-grid"></div>
+<button class="btn" onclick="showMap()">返回</button>
+</div>
+<div id="shop-screen" class="screen">
+<h2 style="text-align:center;color:#ffd700">🏪 仙宝阁</h2>
+<p style="text-align:center">💰 <span id="shop-gold">0</span></p>
+<div class="bg-box" id="shop-grid"></div>
+<button class="btn" onclick="showMap()">返回</button>
+</div>
+<div id="achieve-screen" class="screen">
+<h2 style="text-align:center;color:#ffd700">🏆 成就</h2>
+<div class="bg-box" id="achieve-grid"></div>
+<button class="btn" onclick="showMap()">返回</button>
+</div>
+<div id="end-screen" class="screen">
+<div style="text-align:center;padding:30px">
+<div id="end-title" style="font-size:28px;color:#ffd700;margin-bottom:20px">第一章 · 完</div>
+<div id="end-reward" style="color:#88ff00;font-size:16px">金币+100</div>
+<button class="btn" onclick="showMap()">返回</button>
+</div>
+</div>
+</div>
+<script>
+const heroes=[{name:'姜子牙',icon:'📜',hp:100,maxHp:100,atk:15,def:10,mp:80,skills:['封神榜','五行术','天雷击']},{name:'哪吒',icon:'🔥',hp:120,maxHp:120,atk:25,def:5,mp:30,skills:['火尖枪','混天绫','风火轮']},{name:'杨戬',icon:'👁️',hp:110,maxHp:110,atk:20,def:15,mp:50,skills:['八九玄功','三尖两刃刀','哮天犬']},{name:'雷震子',icon:'⚡',hp:90,maxHp:90,atk:18,def:8,mp:40,skills:['风雷翅','雷电击','雷公锥']}];
+const skillEff={'封神榜':2.5,'五行术':1.8,'天雷击':2.2,'火尖枪':2.0,'混天绫':1.5,'风火轮':1.2,'八九玄功':1.8,'三尖两刃刀':2.1,'哮天犬':1.6,'风雷翅':1.4,'雷电击':2.0,'雷公锥':2.2};
+const maps=[{id:0,name:'陈塘关',icon:'🏯',e:['巡海夜叉','虾兵','蟹将'],boss:'东海龙王',exp:50},{id:1,name:'阐教',icon:'⛰️',e:['小妖','青毛狮','黑虎精'],boss:'申公豹',exp:80},{id:2,name:'朝歌',icon:'🏰',e:['纣王禁卫','妲己侍从'],boss:'纣王',exp:120},{id:3,name:'摘星楼',icon:'🌙',e:['妖狐卫士','梅山七怪'],boss:'闻仲',exp:150},{id:4,name:'战场',icon:'⚔️',e:['张桂芳','魔家四将'],boss:'孔宣',exp:200}];
+const enemies={'巡海夜叉':{i:'👺',h:40,a:12,ex:15,g:10},'虾兵':{i:'🦐',h:25,a:8,ex:8,g:5},'蟹将':{i:'🦀',h:35,a:10,ex:12,g:8},'东海龙王':{i:'🐲',h:200,a:25,ex:60,g:50},'小妖':{i:'👺',h:30,a:8,ex:10,g:8},'青毛狮':{i:'🦁',h:60,a:15,ex:20,g:15},'黑虎精':{i:'🐅',h:50,a:14,ex:18,g:12},'申公豹':{i:'👹',h:180,a:22,ex:50,g:40},'纣王禁卫':{i:'💂',h:70,a:20,ex:25,g:20},'妲己侍从':{i:'👩',h:50,a:18,ex:18,g:15},'纣王':{i:'👑',h:350,a:30,ex:120,g:80},'妖狐卫士':{i:'🦊',h:65,a:22,ex:22,g:18},'梅山七怪':{i:'👹',h:100,a:24,ex:40,g:35},'闻仲':{i:'👴',h:300,a:30,ex:100,g:70},'张桂芳':{i:'⚔️',h:100,a:25,ex:35,g:30},'魔家四将':{i:'👺',h:150,a:28,ex:60,g:50},'孔宣':{i:'🦚',h:450,a:38,ex:180,g:120}};
+const equips=[{id:0,n:'打神鞭',i:'📿',t:'w',a:10,p:100},{id:1,n:'火尖枪',i:'🔱',t:'w',a:15,p:150},{id:2,n:'八卦衣',i:'👘',t:'a',d:10,p:100},{id:3,n:'混天绫',i:'🧣',t:'a',d:6,p:80},{id:4,n:'定海珠',i:'💎',t:'c',a:8,p:180}];
+const achieves=[{i:'🏅',n:'初出茅庐',d:'通关第一章'},{i:'🥉',n:'小试牛刀',d:'通关第二章'},{i:'🥈',n:'身经百战',d:'通关第三章'},{i:'🥇',n:'封神英雄',d:'通关第四章'},{i:'👑',n:'天下无敌',d:'通关所有关卡'}];
+let player,gData={l:1,e:0,etl:100,gold:0,equip:[-1,-1,-1],owned:[],unlocked:0,ach:[]},curMap=0,curEnemy,phase=0;
+function msg(t){const m=document.createElement('div');m.className='message';m.textContent=t;document.getElementById('message-area').appendChild(m);setTimeout(()=>m.remove(),2000);}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function startGame(){show('char-select');}
+let sel=1;
+function selectChar(i){sel=i;document.querySelectorAll('.char-card').forEach((c,j)=>c.classList.toggle('selected',j===i));}
+function confirmChar(){player={...heroes[sel]};player.hp=player.maxHp;gData={l:1,e:0,etl:100,gold:0,equip:[-1,-1,-1],owned:[],unlocked:0,ach:[]};showMap();}
+function showMap(){
+document.getElementById('map-icon').textContent=player.icon;
+document.getElementById('map-name').textContent=player.name+' Lv.'+gData.l;
+document.getElementById('map-hp').textContent=Math.floor(player.hp);
+document.getElementById('map-exp').textContent=gData.e;
+document.getElementById('map-gold').textContent=gData.gold;
+const g=document.getElementById('map-grid');g.innerHTML='';
+maps.forEach((m,i)=>{const d=document.createElement('div');d.className='map-card'+(i===gData.unlocked?' current':'');d.innerHTML=`<div style="font-size:32px">${m.icon}</div><div style="font-weight:bold">${m.name}</div><div style="font-size:10px;color:#ffd700">${i<=gData.unlocked?(i===gData.unlocked?'进行中':'已完成'):'未解锁'}</div>`;d.onclick=()=>{if(i<=gData.unlocked){curMap=i;phase=0;startBattle();}};g.appendChild(d);});
+show('map-screen');
+}
+function startBattle(){
+const m=maps[curMap];let en=phase<2?m.e[Math.floor(Math.random()*m.e.length)]:m.boss;
+const e=enemies[en];
+curEnemy={n:en,...e,mh:e.h};
+document.getElementById('enemy-sprite').textContent=e.i;
+document.getElementById('enemy-name').textContent=en;
+show('battle-screen');
+}
+function updUI(){document.getElementById('player-sprite').textContent=player.icon;document.getElementById('enemy-hp').textContent='HP: '+curEnemy.h+'/'+curEnemy.mh;}
+function getAtk(){let a=player.atk;if(gData.equip[0]>=0){const e=equips[gData.equip[0]];if(e.a)a+=e.a}return a}
+function getDef(){let d=player.def;if(gData.equip[1]>=0){const e=equips[gData.equip[1]];if(e.d)d+=e.d}return d}
+function playerAttack(){const dmg=Math.max(1,getAtk()+Math.floor(Math.random()*10)-5);curEnemy.h-=dmg;showDmg(dmg);msg(player.name+' 攻击！');if(curEnemy.h<=0){setTimeout(win,500)}else{setTimeout(enemyTurn,500)}updUI();}
+function playerSkill(){const sk=player.skills[Math.floor(Math.random()*player.skills.length)];const dmg=Math.max(1,Math.floor(getAtk()*skillEff[sk])+Math.floor(Math.random()*15));curEnemy.h-=dmg;showDmg(dmg);msg(player.name+' 使用 '+sk+'！');if(curEnemy.h<=0){setTimeout(win,500)}else{setTimeout(enemyTurn,500)}updUI();}
+function playerDefend(){msg(player.name+' 防御！');setTimeout(()=>enemyTurn(true),500);}
+function playerHeal(){const h=Math.floor(player.maxHp*0.35);player.hp=Math.min(player.maxHp,player.hp+h);msg('恢复 '+h+' HP！');setTimeout(()=>enemyTurn(),500);updUI();}
+function showDmg(n){const d=document.createElement('div');d.className='damage';d.textContent='-'+n;d.style.left='50%';d.style.top='35%';document.getElementById('battle-screen').appendChild(d);setTimeout(()=>d.remove(),800);}
+function enemyTurn(def=false){const dmg=Math.max(1,curEnemy.a-(def?getDef():0)+Math.floor(Math.random()*8));player.hp-=dmg;showDmg(dmg);msg(curEnemy.n+' 攻击！');if(player.hp<=0){msg('失败...');setTimeout(()=>{player.hp=player.maxHp;showMap()},1500)}else{phase++;if(phase>=3){curEnemy.h=0;win()}else{startBattle()}}updUI();}
+function win(){
+const ex=curEnemy.ex||50;const gl=curEnemy.g||20;gData.e+=ex;gData.gold+=gl;msg('胜利！+'+ex+'经验 +'+gl+'金币');
+if(gData.e>=gData.etl){gData.l++;gData.e-=gData.etl;gData.etl=Math.floor(gData.etl*1.3);player.maxHp+=10;player.atk+=2;player.hp=player.maxHp;msg('升级！Lv.'+gData.l);}
+if(phase>=2||curEnemy.n===maps[curMap].boss){if(curMap>=gData.unlocked&&curMap<maps.length-1)gData.unlocked=curMap+1;if(gData.unlocked>=1&&!gData.ach.includes(0)){gData.ach.push(0);msg('🏅 成就解锁！');}
+setTimeout(()=>{document.getElementById('end-title').textContent='第'+(curMap+1)+'章 · 完';document.getElementById('end-reward').textContent='金币+'+(50+curMap*20);show('end-screen')},1000);}else{phase++;setTimeout(startBattle,1000);}}
+function showEquip(){const g=document.getElementById('equip-grid');g.innerHTML='';['武器','防具','饰品'].forEach((t,i)=>{const e=gData.equip[i]>=0?equips[gData.equip[i]]:null;g.innerHTML+=`<div style="text-align:center;padding:10px;background:rgba(255,255,255,0.1);border-radius:8px${e?';border:1px solid #ffd700':''}"><div style="font-size:24px">${e?e.i:'📦'}</div><div>${e?e.n:'未装备'}</div></div>`;});show('equip-screen');}
+function showShop(){document.getElementById('shop-gold').textContent=gData.gold;const g=document.getElementById('shop-grid');g.innerHTML='';equips.forEach(e=>{const ow=gData.owned.includes(e.id);g.innerHTML+=`<div style="text-align:center;padding:12px;background:rgba(255,255,255,0.1);border-radius:8px;cursor:pointer;opacity:${ow?0.5:1}" onclick="${ow?'':'buy('+e.id+')'}"><div style="font-size:28px">${e.i}</div><div>${e.n}</div><div style="color:#ffd700">💰${e.p}</div></div>`;});show('shop-screen');}
+function buy(id){const e=equips.find(x=>x.id==id);if(gData.gold>=e.p){gData.gold-=e.p;gData.owned.push(e.id);if(e.t==='w')gData.equip[0]=e.id;else if(e.t==='a')gData.equip[1]=e.id;else gData.equip[2]=e.id;player.atk+=e.a||0;player.def+=e.d||0;msg('购买 '+e.n+'！');showShop();}else{msg('金币不足！');}}
+function showSkills(){const g=document.getElementById('skill-list');g.innerHTML='';player.skills.forEach(s=>g.innerHTML+=`<div style="padding:8px;margin:5px 0;background:rgba(255,255,255,0.1);border-radius:8px"><span style="color:#aa44ff;font-weight:bold">${s}</span> <span style="float:right">${skillEff[s]}倍伤害</span></div>`);show('skill-screen');}
+function showAchieve(){const g=document.getElementById('achieve-grid');g.innerHTML='';achieves.forEach(a=>{const un=gData.ach.includes(a.n==='初出茅庐'?0:a.n==='小试牛刀'?1:a.n==='身经百战'?2:a.n==='封神英雄'?3:4);g.innerHTML+=`<div style="text-align:center;padding:12px;background:rgba(255,255,255,0.1);border-radius:8px;border:${un?'1px solid #ffd700':'1px solid #444'}"><div style="font-size:24px">${a.i}</div><div>${a.n}</div><div style="font-size:10px;color:#888">${a.d}</div></div>`;});show('achieve-screen');}
+</script>
+</body>
+</html>
